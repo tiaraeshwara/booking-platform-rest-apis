@@ -1,104 +1,345 @@
 {
   "info": {
     "name": "Booking Platform API",
+    "description": "Full Postman collection for the Booking Platform REST API.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Auth - Register",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/auth/register",
-          "host": ["{{baseUrl}}"],
-          "path": ["auth", "register"]
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.accessToken) pm.environment.set('accessToken', data.accessToken);",
+                  "  if (data.refreshToken) pm.environment.set('refreshToken', data.refreshToken);",
+                  "  if (data.user && data.user.email) pm.environment.set('userEmail', data.user.email);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\",\n  \"name\": \"{{userName}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Registers a new user and stores returned tokens in environment variables."
+          }
         },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Secur3Pass!\",\n  \"name\": \"Admin\"\n}"
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.accessToken) pm.environment.set('accessToken', data.accessToken);",
+                  "  if (data.refreshToken) pm.environment.set('refreshToken', data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticates a user and refreshes stored JWT variables."
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.accessToken) pm.environment.set('accessToken', data.accessToken);",
+                  "  if (data.refreshToken) pm.environment.set('refreshToken', data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Requests a new access token pair using the stored refresh token."
+          }
         }
-      }
+      ]
     },
     {
-      "name": "Auth - Login",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/auth/login",
-          "host": ["{{baseUrl}}"],
-          "path": ["auth", "login"]
+      "name": "Services",
+      "item": [
+        {
+          "name": "Create Service",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.id) pm.environment.set('serviceId', data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Haircut\",\n  \"description\": \"Classic haircut service\",\n  \"duration\": 45,\n  \"price\": 29.99,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["services"]
+            },
+            "description": "Creates a service and saves its ID into the environment."
+          }
         },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Secur3Pass!\"\n}"
+        {
+          "name": "List Services",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/services?page=1&limit=10&isActive=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["services"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "isActive", "value": "true" }
+              ]
+            },
+            "description": "Lists services with pagination and active filter."
+          }
+        },
+        {
+          "name": "Get Service By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/services/{{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["services", "{{serviceId}}"]
+            },
+            "description": "Fetches a single service using the stored serviceId."
+          }
+        },
+        {
+          "name": "Update Service",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Premium Haircut\",\n  \"description\": \"Updated premium service\",\n  \"duration\": 60,\n  \"price\": 39.99,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/services/{{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["services", "{{serviceId}}"]
+            },
+            "description": "Updates an existing service."
+          }
+        },
+        {
+          "name": "Delete Service",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/services/{{serviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["services", "{{serviceId}}"]
+            },
+            "description": "Deletes the current service."
+          }
         }
-      }
+      ]
     },
     {
-      "name": "Services - Create",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" },
-          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/services",
-          "host": ["{{baseUrl}}"],
-          "path": ["services"]
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "Create Booking (Public)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 201 || pm.response.code === 200) {",
+                  "  const data = pm.response.json();",
+                  "  if (data.id) pm.environment.set('bookingId', data.id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"John Doe\",\n  \"customerEmail\": \"john@example.com\",\n  \"customerPhone\": \"+628123456789\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"bookingDate\": \"2026-12-31\",\n  \"bookingTime\": \"14:00:00\",\n  \"notes\": \"Please call first\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"]
+            },
+            "description": "Creates a public booking and stores the bookingId."
+          }
         },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"title\": \"Haircut\",\n  \"description\": \"Classic haircut\",\n  \"duration\": 45,\n  \"price\": 29.99,\n  \"isActive\": true\n}"
-        }
-      }
-    },
-    {
-      "name": "Bookings - Create (Public)",
-      "request": {
-        "method": "POST",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/bookings",
-          "host": ["{{baseUrl}}"],
-          "path": ["bookings"]
+        {
+          "name": "List Bookings",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings?page=1&limit=10&status=PENDING&search=john",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "status", "value": "PENDING" },
+                { "key": "search", "value": "john" }
+              ]
+            },
+            "description": "Lists bookings with pagination, status filter, and text search."
+          }
         },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"customerName\": \"John Doe\",\n  \"customerEmail\": \"john@example.com\",\n  \"customerPhone\": \"+628123456789\",\n  \"serviceId\": \"{{serviceId}}\",\n  \"bookingDate\": \"2026-12-20\",\n  \"bookingTime\": \"14:00:00\",\n  \"notes\": \"Please call first\"\n}"
+        {
+          "name": "Get Booking By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}"]
+            },
+            "description": "Fetches a single booking."
+          }
+        },
+        {
+          "name": "Update Booking Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CONFIRMED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "status"]
+            },
+            "description": "Updates booking status. Allowed transitions are enforced by the API."
+          }
+        },
+        {
+          "name": "Cancel Booking",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{accessToken}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/cancel",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", "cancel"]
+            },
+            "description": "Cancels a booking."
+          }
         }
-      }
-    },
-    {
-      "name": "Bookings - List",
-      "request": {
-        "method": "GET",
-        "header": [
-          { "key": "Authorization", "value": "Bearer {{accessToken}}" }
-        ],
-        "url": {
-          "raw": "{{baseUrl}}/bookings?page=1&limit=10",
-          "host": ["{{baseUrl}}"],
-          "path": ["bookings"],
-          "query": [
-            { "key": "page", "value": "1" },
-            { "key": "limit", "value": "10" }
-          ]
-        }
-      }
+      ]
     }
   ],
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "userEmail", "value": "admin@example.com" },
+    { "key": "userPassword", "value": "Secur3Pass!" },
+    { "key": "userName", "value": "Admin" },
     { "key": "accessToken", "value": "" },
-    { "key": "serviceId", "value": "" }
+    { "key": "refreshToken", "value": "" },
+    { "key": "serviceId", "value": "" },
+    { "key": "bookingId", "value": "" }
   ]
 }
