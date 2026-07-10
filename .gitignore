@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+booking-platform-api/node_modules/
+
+# Build output
+dist/
+build/
+coverage/
+booking-platform-api/dist/
+booking-platform-api/coverage/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+booking-platform-api/.env
+booking-platform-api/.env.local
+booking-platform-api/.env.development.local
+booking-platform-api/.env.test.local
+booking-platform-api/.env.production.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime / OS files
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Jest
+.nyc_output/
+
+# Optional local DB files (if used)
+*.sqlite
+*.sqlite3
