@@ -114,5 +114,5 @@ npm run test:cov
 - Role-based access control (admin/provider/customer)
 - Rate limiting and brute-force protection on auth endpoints
 - Email/SMS notifications for booking lifecycle events
-- Redis caching for list endpoints
+- Redis caching for list endpoint
 - Dedicated integration tests with isolated test DB
