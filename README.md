@@ -109,10 +109,10 @@ npm run test:cov
 - Datetime comparisons use server timezone.
 - Customer phone validation follows E.164-style regex.
 
-## Future Improvements
+## Future-Improvements
 
 - Role-based access control (admin/provider/customer)
 - Rate limiting and brute-force protection on auth endpoints
 - Email/SMS notifications for booking lifecycle events
-- Redis caching for list endpoint
+- Redis caching for list endpoints
 - Dedicated integration tests with isolated test DB
