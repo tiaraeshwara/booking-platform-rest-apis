@@ -105,14 +105,13 @@ npm run test:cov
 - Only booking creation (`POST /bookings`) is public.
 - Booking cancellation endpoint requires authentication to align with admin-style management.
 - Services cannot be deleted while pending bookings exist.
-- Duplicate slot prevention is enforced in service logic against non-cancelled bookings.
+- Duplicate slot prevention is enforced in service logic against non-cancelled booking
 - Datetime comparisons use server timezone.
 - Customer phone validation follows E.164-style regex.
 
-## Future -Improvements
+## Future-Improvements
 
 - Role-based access control (admin/provider/customer)
 - Rate limiting and brute-force protection on auth endpoints
 - Email/SMS notifications for booking lifecycle events
-- Redis caching for list endpoint
 - Dedicated integration tests with isolated test DB
